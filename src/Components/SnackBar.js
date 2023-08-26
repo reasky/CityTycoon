@@ -62,10 +62,10 @@ function SnackBar(props) {
       <View style={styles.toastRow}>
         {icon}
         <View style={styles.toastText}>
-          <Text style={{ fontWeight: "bold", fontSize: 15, color: "white" }}>
+          <Text style={{ fontWeight: "bold", fontSize: 15, color: "white", paddingTop: 6 }}>
             {header}
           </Text>
-          <Text style={{ fontSize: 12, color: "white"}}>
+          <Text style={{ fontSize: 12, color: "white", paddingBottom: 7 }}>
             {message}
           </Text>
         </View>
@@ -99,7 +99,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.secondary,
     justifyContent: "center",
     alignItems: "center",
-    height: 80,
     borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: {

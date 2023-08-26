@@ -7,7 +7,9 @@ import { gStyle, colors } from '../constants';
 
 // import screens
 import OnboardScreen from '../OnboardScreen';
-import MenuScreen from '../MenuScreen';
+
+// tab navigation
+import TabNavigation from './TabNavigation';
 
 const Stack = createNativeStackNavigator();
 export const GlobalStateContext = createContext();
@@ -23,10 +25,8 @@ function RootStack() {
     try {
       var value = await AsyncStorage.getItem('user');
       if (value !== null) {
-        console.log(JSON.parse(value))
         setUser(JSON.parse(value))
       } else {
-        console.log(value + ' value')
         setUser([])
       }
     } catch (e) {
@@ -37,10 +37,14 @@ function RootStack() {
   return (
     <GlobalStateContext.Provider value={{ user, setUser }}>
       <NavigationContainer theme={DarkTheme} independent={true}>
-        <Stack.Navigator>
+        <Stack.Navigator
+          screenOptions={{
+            presentation: 'fullScreenModal'
+          }}
+        >
           <Stack.Screen
-            name="Menu"
-            component={MenuScreen}
+            name="TabNavigation"
+            component={TabNavigation}
             options={{
               headerShown: false
             }}
