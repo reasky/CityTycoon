@@ -35,7 +35,7 @@ function SnackBar(props) {
         duration: 300,
         useNativeDriver: true,
       }).start();
-    }, 2000);
+    }, 6000);
   };
 
   const instantPopOut = () => {

@@ -20,6 +20,9 @@ const mediumcity = require('./assets/animations/cities/mediumcity.json')
 const bigcity = require('./assets/animations/cities/bigcity.json')
 const largecity = require('./assets/animations/cities/largecity.json')
 
+// import events
+const villageEvents = require('./assets/events/village.json')
+
 import SnackBar from './Components/SnackBar'
 import Button from './Components/Button'
 import CountdownTimer from './Components/ReFillComponent'
@@ -28,7 +31,7 @@ import { AntDesign, FontAwesome5, Ionicons, MaterialIcons, Entypo } from '@expo/
 
 function getRandomInt(min, max) {
   return Math.floor(
-    Math.random() * (max - min) + min
+    Math.random() * (max - min) + min // минимум включается, максимум нет
   )
 }
 
@@ -76,6 +79,15 @@ function MenuScreen({ navigation, route }) {
     if (status.isLoaded && !status.isPlaying && status.positionMillis === status.durationMillis) {
       setIsSoundFinish(!isSoundFinish)
     }
+  }
+
+  function giveMoney() {
+    user[0].money = 10000;
+    user[0].firemanService = 0;
+    user[0].policeService = 0;
+    user[0].securityService = 0;
+    user[0].medicineService = 0;
+    save();
   }
 
   const playSound = async () => {
@@ -146,6 +158,38 @@ function MenuScreen({ navigation, route }) {
     save();
   }
 
+  function payEvent() {
+    const cityChances = {
+        'village': 10,
+        'smallcity': 20,
+        'mediumcity': 30,
+        'bigcity': 40,
+        'largecity': 50
+    };
+
+    console.log(villageEvents)
+
+    const services = ['police', 'security', 'fireman', 'medicine']
+
+    const userCity = user[0].city;
+    const maxChance = cityChances[userCity];
+
+    if (maxChance && Math.floor(Math.random() * maxChance) === 0) {
+      if (userCity == 'village') {
+        const selectedService = services[getRandomInt(0,5)]
+        if (selectedService == 'police') {
+
+        } else if (selectedService == 'security') {
+
+        } else if (selectedService == 'fireman') {
+
+        } else if (selectedService == 'medicine') {
+
+        }
+      }
+    }
+  }
+
   function giveTax() {
     const userData = user[0];
     let { city, tax, people, money, happiness } = userData;
@@ -174,7 +218,7 @@ function MenuScreen({ navigation, route }) {
             return;
         }
 
-        userData.money = userData.money + tax*(people-1) + userData.cars*15 + userData.agro*30 + userData.electroEnergy*5 + userData.oil*100 + userData.chemist*40 - userData.securityService - userData.policeService;
+        userData.money = userData.money + tax*(people-1) + userData.cars*15 + userData.agro*30 + userData.electroEnergy*5 + userData.oil*100 + userData.chemist*40 - userData.securityService - userData.policeService - userData.firemanService;
         userData.happiness = happiness;
         save();
     }
@@ -267,10 +311,13 @@ function MenuScreen({ navigation, route }) {
             if (userData.city == 'tree') {
                 user[0].money = 100;
                 console.log(user[0].securityService)
-                user[0].securityService = 0;
-                user[0].policeService = 0;
                 save()
             }
+
+            user[0].securityService = 0;
+            user[0].policeService = 0;
+            user[0].firemanService = 0;
+            user[0].medicineService = 0;
 
             if (previousCityName !== 'tree' && cityData.hasOwnProperty(previousCityName)) {
                 const previousCityChanges = cityData[previousCityName];
@@ -336,7 +383,7 @@ function MenuScreen({ navigation, route }) {
     setSnackbar(true)
     setTimeout(()=>{
       setSnackbar(false)
-    },3000)
+    },7000)
   }
 
   function reFill() {
@@ -437,6 +484,7 @@ function MenuScreen({ navigation, route }) {
               </View>
             </View>
             <View style={{ alignItems: "center" }}>
+            <Button onPress={payEvent} text={`Улучшить город`} />
               {user[0].city == 'largecity' ? null : <Button onPress={buy} text={`Улучшить город • ${getPriceUpgrade()}$`} /> }
             </View>
           </ScrollView>

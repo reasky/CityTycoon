@@ -31,7 +31,7 @@ export default function OnboardingScreen() {
   const handleStart = async () => {
     if (name.length == 0) return ssb(<FontAwesome5 name="city" size={24} color="white" />, 'Ошибка!', 'Название города не может быть пустым!')
     console.log('handleStart')
-    user.push({name: name, city: 'tree', money: 100, people: 1, happiness: 5, tax: 3, cars: 0, agro: 0, electroEnergy: 0, oil: 0, chemist: 0, securityService: 0})
+    user.push({name: name, city: 'tree', money: 100, people: 1, happiness: 5, tax: 3, cars: 0, agro: 0, electroEnergy: 0, oil: 0, chemist: 0, securityService: 0, firemanService: 0, medicineService: 0})
     await AsyncStorage.setItem('user', JSON.stringify(user));
     setUser(user)
     navigation.navigate('Menu', { update: true });
