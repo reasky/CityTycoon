@@ -16,6 +16,9 @@ export const GlobalStateContext = createContext();
 
 function RootStack() {
   const [user, setUser] = useState(undefined);
+  const [modalHeader, setModalHeader] = useState('')
+  const [modalText, setModalText] = useState('')
+  const [modalVisible, setModalVisible] = useState(0)
 
   useEffect(() => {
     readDataUser()
@@ -35,7 +38,7 @@ function RootStack() {
   }
 
   return (
-    <GlobalStateContext.Provider value={{ user, setUser }}>
+    <GlobalStateContext.Provider value={{ user, setUser, modalHeader, setModalHeader, modalText, setModalText, modalVisible, setModalVisible }}>
       <NavigationContainer theme={DarkTheme} independent={true}>
         <Stack.Navigator
           screenOptions={{

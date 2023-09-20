@@ -6,6 +6,7 @@ import { GlobalStateContext } from './navigation/RootStack';
 import { useNavigation } from '@react-navigation/native';
 import { colors, gStyle } from './constants';
 const {width, height} = Dimensions.get('window');
+import PopupComponent from './Components/PopupComponent'
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -45,8 +46,11 @@ function ServicesScreen() {
   }
 
   async function handleChangeFin(value, type) {
-    if (user[0].city == 'tree') return ssb(<FontAwesome5 name="city" size={24} color="white" />, 'Предупреждение', 'Ваш уровень города слишком мал. Город под угрозой разорения.');
-    user[0][type+'Service'] = value
+    if (user[0].city == 'tree') {
+      ssb(<FontAwesome5 name="city" size={24} color="white" />, 'Предупреждение', 'Ваш уровень города слишком мал. Город под угрозой разорения.');
+      user[0][type+'Service'] = 0
+    }
+    user[0][type+'Service'] = parseInt(value)
     save()
   }
 
@@ -58,18 +62,21 @@ function ServicesScreen() {
   }
 
   function calculateMaxFin(serviceType) {
-    const serviceKeys = {
-      security: 'securityService',
-      police: 'policeService',
-      fireman: 'firemanService',
-      medicine: 'medicineService'
-    };
+    if (user[0].city == 'tree') return 0
 
-    const otherServices = Object.keys(serviceKeys)
-      .filter(key => key !== serviceType)
-      .map(key => user[0][serviceKeys[key]]);
+    const serviceKeys = [
+      'securityService',
+      'policeService',
+      'firemanService',
+      'medicineService'
+    ];
 
-    return user[0].money - otherServices.reduce((total, service) => total + service, 0);
+    let otherServices = serviceKeys.filter((service) => service != serviceType)
+    console.log(otherServices)
+    let otherFinServies = otherServices.map(key => user[0][key]);
+    console.log(otherFinServies)
+
+    return user[0].money - otherFinServies.reduce((total, service) => total + service, 0);
   }
 
   useEffect(() => {
@@ -93,12 +100,13 @@ function ServicesScreen() {
           { snackbar ? <SnackBar icon={icon} header={header} message={message} /> : null }
           <ScrollView style={{ zIndex: -1 }}>
             <View style={{ alignItems: "center" }}>
-              <ServicesCardComponent maxFin={calculateMaxFin('security')} value={user[0].securityService} lottie={previewSecurity} onChange={handleChangeFin} type={'security'} color={'#474747'} name="Личная охрана" description="Личная охрана защищает вас от недоброжелателей" />
-              <ServicesCardComponent maxFin={calculateMaxFin('police')} value={user[0].policeService} lottie={previewPolice} onChange={handleChangeFin} type={'police'} color={'#4a4e62'} name="Полиция" description="Следит за порядком в городе" />
-              <ServicesCardComponent maxFin={calculateMaxFin('fireman')} value={user[0].firemanService} lottie={previewFireman} onChange={handleChangeFin} type={'fireman'} color={'#d66464'} name="Пожарные" description="Следит за пожарами в городе" />
-              <ServicesCardComponent maxFin={calculateMaxFin('medicine')} value={user[0].medicineService} lottie={previewMedicine} onChange={handleChangeFin} type={'medicine'} color={'#558daf'} name="Медицина" description="Заботится о здоровье граждан" />
+              <ServicesCardComponent maxFin={calculateMaxFin('securityService')} value={user[0].securityService} lottie={previewSecurity} onChange={handleChangeFin} type={'security'} color={'#474747'} name="Личная охрана" description="Личная охрана защищает вас от недоброжелателей" />
+              <ServicesCardComponent maxFin={calculateMaxFin('policeService')} value={user[0].policeService} lottie={previewPolice} onChange={handleChangeFin} type={'police'} color={'#4a4e62'} name="Полиция" description="Следит за порядком в городе" />
+              <ServicesCardComponent maxFin={calculateMaxFin('firemanService')} value={user[0].firemanService} lottie={previewFireman} onChange={handleChangeFin} type={'fireman'} color={'#d66464'} name="Пожарные" description="Следит за пожарами в городе" />
+              <ServicesCardComponent maxFin={calculateMaxFin('medicineService')} value={user[0].medicineService} lottie={previewMedicine} onChange={handleChangeFin} type={'medicine'} color={'#558daf'} name="Медицина" description="Заботится о здоровье граждан" />
             </View>
           </ScrollView>
+          <PopupComponent />
         </View>
       : null
     : null

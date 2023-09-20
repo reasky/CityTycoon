@@ -6,6 +6,7 @@ import { GlobalStateContext } from './navigation/RootStack';
 import { useNavigation } from '@react-navigation/native';
 import { colors, gStyle } from './constants';
 const {width, height} = Dimensions.get('window');
+import PopupComponent from './Components/PopupComponent'
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -104,6 +105,7 @@ function BusinessScreen() {
               <BusinessCardComponent lottie={previewChemist} onPress={buyBusiness} level={user[0].chemist} type={'chemist'} name={'Хим. промышленность'} description={'Хим. промышленность повышает Ваши доходы'} money={'40'} price={getPriceUpgradeBusiness('chemist')} color={'#a90000'} />
             </View>
           </ScrollView>
+          <PopupComponent />
         </View>
       : null
     : null

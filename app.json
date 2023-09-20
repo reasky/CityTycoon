@@ -1,31 +1,43 @@
 {
   "expo": {
-    "name": "citytycoon",
+    "name": "CityScape",
     "slug": "citytycoon",
-    "version": "1.0.0",
+    "version": "0.2-prealfa",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./src/assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#c99e70"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      }
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.onapps.citytycoon"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "versionCode": 2,
       "package": "com.onapps.citytycoon"
     },
     "web": {
       "favicon": "./src/assets/images/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0acd5ee1-c781-4b16-9b77-57cd97d2ef41"
+      }
     }
   }
 }

@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 
 const CountdownTimer = (props) => {
-  const { reFill } = props;
+  const { reFill, timePay } = props;
 
-  const initialTime = 60;
+  const initialTime = timePay;
   const [remainingTime, setRemainingTime] = useState(initialTime);
+
+  useEffect(()=>{
+    setRemainingTime(timePay)
+  },[initialTime])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -23,8 +27,8 @@ const CountdownTimer = (props) => {
   }, [remainingTime, initialTime]);
 
   const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const secondsLeft = seconds % 60;
+    const minutes = Math.floor(seconds / timePay);
+    const secondsLeft = seconds % timePay;
     return `${minutes}:${secondsLeft < 10 ? '0' : ''}${secondsLeft}`;
   };
 

@@ -22,12 +22,14 @@ const largecity = require('./assets/animations/cities/largecity.json')
 
 // import events
 const villageEvents = require('./assets/events/village.json')
+const smallcityEvents = require('./assets/events/smallcity.json')
 
 import SnackBar from './Components/SnackBar'
 import Button from './Components/Button'
 import CountdownTimer from './Components/ReFillComponent'
+import PopupComponent from './Components/PopupComponent'
 
-import { AntDesign, FontAwesome5, Ionicons, MaterialIcons, Entypo } from '@expo/vector-icons';
+import { AntDesign, FontAwesome5, Ionicons, MaterialIcons, Entypo, FontAwesome } from '@expo/vector-icons';
 
 function getRandomInt(min, max) {
   return Math.floor(
@@ -35,13 +37,23 @@ function getRandomInt(min, max) {
   )
 }
 
+function getRandomPercent(percentageOfZero) {
+    if (Math.random() < percentageOfZero / 100) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
 function MenuScreen({ navigation, route }) {
-  const { user, setUser } = useContext(GlobalStateContext);
+  const { user, setUser, setModalText, setModalHeader, setModalVisible } = useContext(GlobalStateContext);
   const animationRef = useRef(null);
 
   const [isUpdated, setIsUpdated] = useState(false);
   const [sound, setSound] = useState();
   const [isSoundFinish, setIsSoundFinish] = useState(true)
+
+  const [payDay, setPayDay] = useState(0)
 
   // snackbar
   const [snackbar, setSnackbar] = useState(false);
@@ -83,6 +95,7 @@ function MenuScreen({ navigation, route }) {
 
   function giveMoney() {
     user[0].money = 10000;
+    user[0].happiness = 5;
     user[0].firemanService = 0;
     user[0].policeService = 0;
     user[0].securityService = 0;
@@ -130,7 +143,6 @@ function MenuScreen({ navigation, route }) {
   }
 
   function getTaxLimits() {
-    console.log('wasd')
     const userData = user[0];
     const city = userData.city;
     console.log(userData)
@@ -167,24 +179,99 @@ function MenuScreen({ navigation, route }) {
         'largecity': 50
     };
 
-    console.log(villageEvents)
-
     const services = ['police', 'security', 'fireman', 'medicine']
 
     const userCity = user[0].city;
-    const maxChance = cityChances[userCity];
+    const chance = cityChances[userCity];
 
-    if (maxChance && Math.floor(Math.random() * maxChance) === 0) {
-      if (userCity == 'village') {
-        const selectedService = services[getRandomInt(0,5)]
+    if (getRandomPercent(chance) == 0) {
+      if (userCity == 'village' || userCity == 'smallcity' || userCity == 'mediumcity' || userCity == 'bigcity' || userCity == 'largecity') {
+        const selectedService = services[getRandomInt(0,4)]
+        console.log(selectedService)
         if (selectedService == 'police') {
-
+          let selectedEvent = villageEvents[selectedService][getRandomInt(0,10)]
+          if (user[0][selectedService+'Service'] < selectedEvent.need) {
+            if (user[0].money < selectedEvent.failDolls) {
+              setModalHeader('fail')
+              setModalText(selectedEvent.fail)
+              setModalVisible(1)
+              user[0].money = 0
+              save()
+            } else {
+              setModalHeader('fail')
+              setModalText(selectedEvent.fail)
+              setModalVisible(1)
+              user[0].money = user[0].money - selectedEvent.failDolls
+              save()
+            }
+          } else {
+            setModalHeader('success')
+            setModalText(selectedEvent.success)
+            setModalVisible(1)
+          }
         } else if (selectedService == 'security') {
-
+          let selectedEvent = villageEvents[selectedService][getRandomInt(0,10)]
+          if (user[0][selectedService+'Service'] < selectedEvent.need) {
+            if (user[0].happiness < selectedEvent.star) {
+              setModalHeader('fail')
+              setModalText(selectedEvent.fail)
+              setModalVisible(1)
+              user[0].happiness = 0
+              save()
+            } else {
+              setModalHeader('fail')
+              setModalText(selectedEvent.fail)
+              setModalVisible(1)
+              user[0].happiness = user[0].happiness - selectedEvent.star
+              save()
+            }
+          } else {
+            setModalHeader('success')
+            setModalText(selectedEvent.success)
+            setModalVisible(1)
+          }
         } else if (selectedService == 'fireman') {
-
+          let selectedEvent = villageEvents[selectedService][getRandomInt(0,10)]
+          if (user[0][selectedService+'Service'] < selectedEvent.need) {
+            if (user[0].money < selectedEvent.failDolls) {
+              setModalHeader('fail')
+              setModalText(selectedEvent.fail)
+              setModalVisible(1)
+              user[0].money = 0
+              save()
+            } else {
+              setModalHeader('fail')
+              setModalText(selectedEvent.fail)
+              setModalVisible(1)
+              user[0].money = user[0].money - selectedEvent.failDolls
+              save()
+            }
+          } else {
+            setModalHeader('success')
+            setModalText(selectedEvent.success)
+            setModalVisible(1)
+          }
         } else if (selectedService == 'medicine') {
-
+          let selectedEvent = villageEvents[selectedService][getRandomInt(0,10)]
+          if (user[0][selectedService+'Service'] < selectedEvent.need) {
+            if (user[0].people-1 <= selectedEvent.people) {
+              setModalHeader('fail')
+              setModalText(selectedEvent.fail)
+              setModalVisible(1)
+              user[0].people = 1
+              save()
+            } else {
+              setModalHeader('fail')
+              setModalText(selectedEvent.fail)
+              setModalVisible(1)
+              user[0].people = user[0].people - selectedEvent.people
+              save()
+            }
+          } else {
+            setModalHeader('success')
+            setModalText(selectedEvent.success)
+            setModalVisible(1)
+          }
         }
       }
     }
@@ -392,6 +479,7 @@ function MenuScreen({ navigation, route }) {
     giveTax();
     managePopulation();
     keepingCity();
+    payEvent();
   }
 
   return (
@@ -456,7 +544,17 @@ function MenuScreen({ navigation, route }) {
                 До пополнения:
               </Text>
               <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end", paddingRight: 4 }}>
-                <CountdownTimer reFill={reFill} />
+                <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end", paddingRight: 4 }}>
+                  <View style={{ backgroundColor: colors.primary, flexDirection: "row", alignItems: "center", borderRadius: 4, borderWidth: 1, marginTop: -1, borderColor: "#d4d4d4", gap: 5, paddingLeft: 5, paddingRight: 4 }}>
+                    <TouchableOpacity onPress={()=>{ setPayDay(0) }}>
+                      <FontAwesome name="angle-right" size={20} color={payDay == 0 ? '#d4d4d4' : 'white'} style={{ marginTop: -1 }} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=>{ setPayDay(1) }}>
+                      <FontAwesome name="angle-double-right" size={20} color={payDay == 1 ? '#d4d4d4' : 'white'} style={{ marginTop: -1 }} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <CountdownTimer reFill={reFill} timePay={payDay == 0 ? 60 : 30} />
               </View>
             </View>
             <View style={[styles.cell, { marginTop: -20 }]}>
@@ -484,10 +582,10 @@ function MenuScreen({ navigation, route }) {
               </View>
             </View>
             <View style={{ alignItems: "center" }}>
-            <Button onPress={payEvent} text={`Улучшить город`} />
               {user[0].city == 'largecity' ? null : <Button onPress={buy} text={`Улучшить город • ${getPriceUpgrade()}$`} /> }
             </View>
           </ScrollView>
+          <PopupComponent />
         </View>
       : null
     : null

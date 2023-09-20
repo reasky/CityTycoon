@@ -22,7 +22,7 @@ const ServicesCardComponent = (props) => {
         <View style={{ flex: 1, justifyContent: "flex-end", bottom: 10 }}>
           <View style={{ flexDirection: "row" }}>
             <Text style={[styles.text, { marginTop: 1, fontSize: 10, alignSelf: "center", maxWidth: 190 }]}>Финансирование: </Text>
-            <NumericInput rounded={true} maxValue={maxFin} minValue={0} separatorWidth={0} value={value} onLimitReached={(isMax, msg) => console.log(isMax, msg)} inputStyle={{ color: colors.white, fontFamily: "mt-bold", whiteSpace: "nowrap" }} containerStyle={{ backgroundColor: colors.primary }} iconStyle={{ color: colors.white }} rightButtonBackgroundColor={colors.primary} backgroundColor={colors.primary} onChange={value => onChange(value, type)} leftButtonBackgroundColor={colors.primary} totalWidth={60} />
+            <NumericInput rounded={true} maxValue={parseInt(maxFin)} minValue={0} separatorWidth={0} value={value} onLimitReached={(isMax, msg) => console.log(isMax, msg)} inputStyle={{ color: colors.white, fontFamily: "mt-bold", whiteSpace: "nowrap" }} containerStyle={{ backgroundColor: colors.primary }} iconStyle={{ color: colors.white }} rightButtonBackgroundColor={colors.primary} backgroundColor={colors.primary} onChange={value => onChange(value, type)} leftButtonBackgroundColor={colors.primary} totalWidth={60} />
             <MaterialIcons name="attach-money" style={{ bottom: 1 }} size={24} color="white" />
           </View>
         </View>
